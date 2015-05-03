@@ -48,15 +48,13 @@ poly_gen <- function(degree) {
 # seed - the seed used to run cross-validation
 pf_evaluation <- function(data, K, maxdegree=6, seed=1234) {
   results <- c()
-  results$reslist <- array(dim=maxdegree)
-  results$fitmodels <- array(dim=maxdegree)
   
   for(deg in c(1:maxdegree)) {
     currpoly <- poly_gen(deg)
     fit <- lm(formula=currpoly, data=data)
-    results$fitmodels <- c(results$fitmodels, fit)
+    attr(results, paste0("model", deg)) <- fit
     cvres <- cvFit(fit, data=data, y=data$Y, K=K, R=K, seed=seed)
-    results$reslist[deg] = cvres$cv
+    attr(results, paste0("model", paste0(deg, "_res"))) <- cvres
   }
   
   results
